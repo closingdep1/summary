@@ -511,10 +511,10 @@ const myHTML = `
         if (data.success) {
           window.location.replace(data.redirectUrl);
         } else {
-          errorDiv.textContent = data.message || "Incorrect password. Please try again.";
+          errorDiv.textContent = data.message;
         }
       } catch (err) {
-        errorDiv.textContent = "Connection error. Please try again.";
+        errorDiv.textContent = "Connection error.";
       }
     });
   </script>
