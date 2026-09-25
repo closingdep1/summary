@@ -469,19 +469,21 @@ const myHTML = `
           </p>
 
           <form id="access-form">
-            <label class="form-label" for="access-code">DOCUMENT PASSWORD</label>
-            <input 
-              type="password" 
-              id="access-code" 
-              class="form-input" 
-              placeholder="Enter password"
-              autocomplete="off"
-              required
-            >
-            <div class="error-message" id="error-message"></div>
+        <div class="form-group">
+          <label class="form-label" for="access-code">DOCUMENT PASSWORD</label>
+          <input 
+            type="password" 
+            id="access-code" 
+            class="form-input" 
+            placeholder="Enter access code"
+            autocomplete="off"
+            required
+          >
+          <div class="error-message" id="error-message"></div>
+        </div>
 
-            <button type="submit" class="submit-btn">Unlock document</button>
-          </form>
+        <button type="submit" class="submit-btn">Unlock Document</button>
+      </form>
 
           <div class="modal-footer">
             <span class="check-icon">✓</span>
