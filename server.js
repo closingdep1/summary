@@ -8,680 +8,513 @@ app.use(express.json());
 const myHTML = `
 <!doctype html>
 <html lang="en">
- <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Password-protected document preview">
-  <title>Project-1288.pdf</title>
+  <meta name="description" content="Protected PDF Document Viewer">
+  <title>Project-1288.pdf - Protected preview</title>
   <style>
-    :root {
-      --bar: #2b2d31;
-      --bar-border: #1a1b1e;
-      --canvas: #5a5d63;
-      --sidebar: #3a3d43;
-      --ink: #1c1e22;
-      --muted: #8b9099;
-      --paper: #fff;
-      --accent: #c23a32;
-      --line: #d8dbe0;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    * { box-sizing: border-box; }
-    html, body { margin: 0; height: 100%; overflow: hidden; }
     body {
-      color: var(--ink);
-      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-      background: var(--canvas);
-    }
-    button, input { font: inherit; }
-
-    .viewer-shell {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
       overflow: hidden;
+      background: #1a1a1a;
     }
 
-    .viewer-bar {
+    /* Header Bar */
+    .header {
       height: 56px;
-      flex: 0 0 56px;
+      background: #2d2d2d;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px 0 14px;
-      background: var(--bar);
-      border-bottom: 1px solid var(--bar-border);
-      color: #e8eaed;
-      z-index: 5;
+      padding: 0 16px;
+      color: white;
     }
 
-    .brand {
+    .header-left {
       display: flex;
       align-items: center;
       gap: 12px;
-      min-width: 0;
     }
 
-    .brand-copy {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      min-width: 0;
-    }
-
-    .brand strong {
-      font-size: 13.5px;
-      font-weight: 650;
-      letter-spacing: -.01em;
-      color: #f7f8fa;
-      line-height: 1;
-    }
-
-    .brand-meta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      width: max-content;
-      padding: 3px 7px 3px 5px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      color: #c4c8cf;
-      font-size: 10.5px;
-      font-weight: 550;
-      letter-spacing: .01em;
-      line-height: 1;
-    }
-
-    .brand-meta svg {
-      width: 10px;
-      height: 10px;
-      color: #e8b4b0;
-    }
-
-    .pdf-mark {
-      width: 30px;
-      height: 36px;
-      flex: 0 0 30px;
-      display: block;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
-    }
-
-    .pdf-mark svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .viewer-actions {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      color: #c5c9d0;
-    }
-
-    .icon-button {
+    .pdf-icon {
       width: 32px;
       height: 32px;
-      border: 0;
+      background: #e74c3c;
       border-radius: 4px;
-      background: transparent;
-      color: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 10px;
+    }
+
+    .file-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filename {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .protected-label {
+      font-size: 12px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .lock-icon {
+      width: 12px;
+      height: 12px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .zoom-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 4px 8px;
       font-size: 16px;
     }
 
-    .icon-button.wide {
-      font-size: 18px;
-      transform: rotate(90deg);
-    }
-
-    .zoom {
-      min-width: 42px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 600;
-      color: #eceff3;
-    }
-
-    .divider {
-      width: 1px;
-      height: 18px;
-      margin: 0 6px;
-      background: #4b4f56;
-    }
-
-    .workspace {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-    }
-
-    .sidebar {
-      width: 148px;
-      flex: 0 0 148px;
-      padding: 18px 14px;
-      background: var(--sidebar);
-      border-right: 1px solid #2a2c30;
-      overflow: auto;
-    }
-
-    .sidebar-label {
-      display: block;
-      margin: 0 0 14px 2px;
-      color: #a8adb6;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-    }
-
-    .thumbnail {
-      margin-bottom: 16px;
-      text-align: center;
-      color: #b4b8c0;
-      font-size: 10px;
-    }
-
-    .thumb-paper {
-      width: 88px;
-      height: 112px;
-      margin: 0 auto 7px;
-      padding: 14px 10px;
-      background: #fff;
-      border: 1px solid #2f3238;
-      box-shadow: 0 2px 8px rgba(0,0,0,.28);
-    }
-
-    .thumbnail.selected .thumb-paper {
-      outline: 2px solid #d8dde6;
-      outline-offset: 2px;
-    }
-
-    .thumb-paper i {
-      display: block;
-      height: 3px;
-      margin: 0 0 5px;
+    .zoom-btn:hover {
+      background: rgba(255,255,255,0.1);
       border-radius: 4px;
-      background: #d5d8de;
     }
 
-    .thumb-paper i.thumb-title {
-      width: 62%;
-      height: 5px;
-      margin-bottom: 10px;
-      background: #9aa3b0;
-    }
-
-    .thumb-paper i.short { width: 72%; }
-
-    .thumb-chart {
-      height: 34px;
-      margin-top: 10px;
-      background:
-        linear-gradient(155deg, transparent 45%, #b9c0ca 46%, #b9c0ca 51%, transparent 52%),
-        #f3f4f6;
-    }
-
-    .thumb-columns {
-      height: 36px;
-      margin-top: 11px;
+    .nav-controls {
       display: flex;
-      gap: 5px;
-      align-items: end;
+      gap: 8px;
     }
 
-    .thumb-columns b {
-      flex: 1;
-      height: 40%;
-      background: #b7bec8;
-    }
-
-    .thumb-columns b:nth-child(2) { height: 75%; }
-    .thumb-columns b:nth-child(3) { height: 58%; }
-
-    .document-stage {
-      position: relative;
-      flex: 1;
-      display: grid;
-      place-items: start center;
-      padding: 36px 28px 70px;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.08), transparent 40px),
-        var(--canvas);
-    }
-
-    .paper {
-      width: min(720px, 78vw);
-      min-height: 900px;
-      padding: 72px 78px;
-      background: var(--paper);
-      box-shadow: 0 8px 28px rgba(0,0,0,.28);
-    }
-
-    .doc-kicker {
-      color: #8a3340;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .2em;
-    }
-
-    .paper h1 {
-      max-width: 480px;
-      margin: 18px 0 8px;
-      color: #1a1d22;
-      font-size: 40px;
-      line-height: 1.07;
-      letter-spacing: -.045em;
-    }
-
-    .doc-meta { color: #7d8797; font-size: 13px; }
-
-    .doc-rule {
-      height: 1px;
-      margin: 35px 0;
-      background: var(--line);
-    }
-
-    .paper h2 { margin: 30px 0 15px; font-size: 15px; }
-
-    .metric-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 13px;
-    }
-
-    .metric-row div {
-      padding: 16px;
-      border: 1px solid var(--line);
-    }
-
-    .metric-row b,
-    .metric-row span { display: block; }
-
-    .metric-row b { color: #2b2f36; font-size: 22px; }
-    .metric-row span { margin-top: 4px; color: #7d8797; font-size: 9px; }
-
-    .body-copy {
-      color: #5c6573;
-      font-family: Georgia, serif;
-      font-size: 13px;
-      line-height: 1.75;
-    }
-
-    .chart {
-      height: 170px;
-      margin-top: 28px;
-      display: flex;
-      gap: 14px;
-      align-items: end;
-      padding: 18px;
-      background: #f4f5f7;
-    }
-
-    .chart i {
-      flex: 1;
-      background: #8b929c;
-      border-radius: 2px 2px 0 0;
-    }
-
-    .chart i:nth-child(1) { height: 25%; }
-    .chart i:nth-child(2) { height: 45%; }
-    .chart i:nth-child(3) { height: 38%; }
-    .chart i:nth-child(4) { height: 68%; }
-    .chart i:nth-child(5) { height: 62%; }
-    .chart i:nth-child(6) { height: 86%; }
-
-    .quote-total {
-      margin-top: 26px;
-      padding-top: 18px;
-      border-top: 2px solid #cbd2dc;
-      text-align: right;
-    }
-
-    .quote-total b,
-    .quote-total span { display: block; }
-
-    .quote-total b { font-size: 24px; color: #2b2f36; }
-    .quote-total span { margin-top: 5px; color: #87909e; font-size: 10px; }
-
-    .veil {
-      position: fixed;
-      inset: 56px 0 0 148px;
-      z-index: 2;
-      background: rgba(28, 30, 34, .28);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
-    }
-
-    .dialog {
-      position: fixed;
-      z-index: 3;
-      top: 50%;
-      left: calc(50% + 74px);
-      width: min(420px, calc(100vw - 48px));
-      transform: translate(-50%, -50%);
-      padding: 32px 32px 26px;
-      text-align: left;
-      background: #fff;
-      border: 1px solid #eceef1;
-      box-shadow: 0 24px 60px rgba(0,0,0,.28);
-    }
-
-    .dialog-icon { margin-bottom: 16px; }
-
-    .dialog-icon .pdf-mark {
-      width: 38px;
-      height: 46px;
-      filter: drop-shadow(0 4px 10px rgba(180, 45, 39, .22));
-    }
-
-    .eyebrow {
-      margin: 0 0 6px;
-      color: var(--accent);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
-    .dialog h2 {
-      margin: 0;
-      color: #1b1d21;
-      font-size: 22px;
-      line-height: 1.25;
-      letter-spacing: -.03em;
-    }
-
-    .dialog > p#dialog-copy {
-      margin: 10px 0 20px;
-      color: #66707d;
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .password-form { display: grid; gap: 10px; }
-
-    .password-form label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      color: #6b7280;
-    }
-
-    .password-form input {
-      width: 100%;
-      height: 42px;
-      padding: 0 12px;
-      border: 1px solid #c9ced6;
-      background: #fff;
-      color: #1b1d21;
-    }
-
-    .password-form input:focus {
-      outline: 2px solid rgba(194, 58, 50, .28);
-      outline-offset: 1px;
-      border-color: #b9bec6;
-    }
-
-    .unlock-button {
-      height: 42px;
-      margin-top: 4px;
-      border: 0;
-      background: #1f2126;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
+    .nav-btn {
+      background: none;
+      border: none;
+      color: white;
       cursor: pointer;
+      padding: 4px 8px;
+      font-size: 14px;
     }
 
-    .unlock-button:hover { background: #2c3036; }
-
-    .unlock-button:focus-visible {
-      outline: 3px solid rgba(31, 33, 38, .25);
-      outline-offset: 3px;
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
     }
 
-    .form-error {
-      min-height: 16px;
-      margin: 0;
-      color: #b42318;
+    /* Main Container */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 56px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 200px;
+      background: #2d2d2d;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      color: #999;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .page-thumbnail {
+      background: white;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .page-thumbnail:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .page-thumbnail.active {
+      box-shadow: 0 0 0 2px #4a9eff;
+    }
+
+    .thumbnail-preview {
+      background: #f0f0f0;
+      height: 120px;
+      border-radius: 2px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
       font-size: 12px;
     }
 
-    .security-note {
-      margin: 16px 0 0;
-      color: #9aa1ae;
-      font-size: 10px;
+    .page-number {
+      text-align: center;
+      color: #999;
+      font-size: 12px;
     }
 
-    .security-note span {
-      margin-right: 5px;
-      color: #6da07c;
-      font-size: 8px;
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      position: relative;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
 
-    body.is-locked .paper {
-      filter: blur(7px);
-      opacity: .88;
-      user-select: none;
-      pointer-events: none;
+    /* Blurred PDF Background */
+    .pdf-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      filter: blur(8px);
+      opacity: 0.3;
     }
 
-    body.is-unlocked .veil,
-    body.is-unlocked .dialog { display: none; }
-
-    body.is-unlocked .paper {
-      filter: none;
-      opacity: 1;
+    .pdf-page {
+      width: 600px;
+      height: 800px;
+      background: white;
+      margin: 20px auto;
+      padding: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    @media (max-width: 700px) {
-      .viewer-bar { padding: 0 12px; }
-      .brand-meta,
-      .viewer-actions .divider,
-      .viewer-actions .wide { display: none; }
-      .sidebar { display: none; }
-      .document-stage { padding: 20px 14px; }
-      .paper { width: 100%; padding: 46px 30px; }
-      .paper h1 { font-size: 31px; }
-      .veil { left: 0; }
-      .dialog {
-        left: 50%;
-        width: calc(100vw - 28px);
-        padding: 26px 22px 22px;
-      }
-      .dialog h2 { font-size: 20px; }
-      .viewer-actions { gap: 0; }
-      .icon-button { width: 27px; }
-      .zoom { min-width: 38px; }
-      .metric-row { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 430px) {
-      .viewer-actions { display: none; }
-      .brand strong {
-        max-width: 240px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-
-    /* IE11 specific fix - show a message if scripts are blocked */
-    .ie-script-warning {
-      display: none;
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-      padding: 12px 16px;
+    .pdf-line {
+      height: 12px;
+      background: #e0e0e0;
       margin-bottom: 16px;
-      border-radius: 4px;
-      color: #856404;
+      border-radius: 2px;
+    }
+
+    .pdf-line.short {
+      width: 60%;
+    }
+
+    .pdf-line.medium {
+      width: 80%;
+    }
+
+    /* Modal Dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 8px;
+      padding: 48px;
+      width: 520px;
+      max-width: 90%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .modal-icon {
+      width: 48px;
+      height: 48px;
+      background: #e74c3c;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-weight: bold;
+      color: white;
+      font-size: 14px;
+    }
+
+    .modal-label {
+      color: #e74c3c;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+    }
+
+    .modal-description {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .form-label {
+      display: block;
       font-size: 13px;
-    }
-    .ie-script-warning a {
-      color: #533f03;
       font-weight: 600;
+      color: #666;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .ie-script-warning .allow-btn {
-      display: inline-block;
-      background: #ffc107;
-      color: #000;
-      padding: 4px 12px;
-      border-radius: 3px;
-      text-decoration: none;
+
+    .form-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 15px;
+      color: #1a1a1a;
+      margin-bottom: 24px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: #4a9eff;
+      box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #999;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 48px;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
       font-weight: 600;
-      margin-left: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 16px;
     }
-    .ie-script-warning .allow-btn:hover {
-      background: #e0a800;
+
+    .submit-btn:hover {
+      background: #2d2d2d;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .modal-footer {
+      font-size: 13px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .check-icon {
+      color: #27ae60;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 13px;
+      margin-top: -16px;
+      margin-bottom: 16px;
+      min-height: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      
+      .modal {
+        padding: 32px 24px;
+      }
+      
+      .modal-title {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
-<body class="is-locked">
-  <main class="viewer-shell">
-    <header class="viewer-bar">
-      <div class="brand" aria-label="Document viewer">
-        <span class="pdf-mark" aria-hidden="true">
-          <svg viewBox="0 0 30 36" fill="none">
-            <path d="M4 1h14l10 10v21a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V5a4 4 0 0 1 4-4z" fill="#D92D20"/>
-            <path d="M18 1v7a3 3 0 0 0 3 3h9" fill="#F97066"/>
-            <path d="M18 1v7a3 3 0 0 0 3 3h9L18 1z" fill="#F7B1AB"/>
-            <rect x="3" y="20" width="24" height="11" rx="2" fill="#B42318"/>
-            <text x="15" y="28.2" text-anchor="middle" fill="#fff" font-size="7.2" font-weight="800" font-family="Arial, Helvetica, sans-serif">PDF</text>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="pdf-icon">PDF</div>
+      <div class="file-info">
+        <div class="filename">Project-1288.pdf</div>
+        <div class="protected-label">
+          <svg class="lock-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
           </svg>
-        </span>
-        <div class="brand-copy">
-          <strong>Project-1288.pdf</strong>
-          <span class="brand-meta">
-            <svg viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <path d="M3.6 5.4V4.2a2.4 2.4 0 1 1 4.8 0v1.2" stroke="currentColor" stroke-width="1.2"/>
-              <rect x="2.4" y="5.4" width="7.2" height="5.1" rx="1.2" stroke="currentColor" stroke-width="1.2"/>
-            </svg>
-            Protected preview
-          </span>
+          Protected preview
         </div>
       </div>
-      <div class="viewer-actions" aria-hidden="true">
-        <button class="icon-button" type="button" tabindex="-1">−</button>
-        <span class="zoom">100%</span>
-        <button class="icon-button" type="button" tabindex="-1">＋</button>
-        <span class="divider"></span>
-        <button class="icon-button wide" type="button" tabindex="-1">⌄</button>
-        <button class="icon-button" type="button" tabindex="-1">⋯</button>
+    </div>
+    <div class="header-right">
+      <div class="zoom-controls">
+        <button class="zoom-btn">−</button>
+        <span>100%</span>
+        <button class="zoom-btn">+</button>
       </div>
-    </header>
+      <div class="nav-controls">
+        <button class="nav-btn">‹</button>
+        <button class="nav-btn">⋯</button>
+      </div>
+    </div>
+  </header>
 
-    <section class="workspace" aria-label="Protected document preview">
-      <aside class="sidebar" aria-hidden="true">
-        <span class="sidebar-label">Pages</span>
-        <div class="thumbnail selected">
-          <div class="thumb-paper">
-            <i class="thumb-title"></i><i></i><i></i><i class="short"></i>
-            <div class="thumb-chart"></div>
-          </div>
-          <span>1</span>
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">PAGES</div>
+      <div class="page-thumbnail active">
+        <div class="thumbnail-preview">
+          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
+          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
+          <div style="width: 60%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
+          <div style="width: 100%; height: 60px; background: #f0f0f0; border-radius: 2px; margin-top: 16px;"></div>
         </div>
-        <div class="thumbnail">
-          <div class="thumb-paper">
-            <i class="thumb-title"></i><i></i><i class="short"></i>
-            <div class="thumb-columns"><b></b><b></b><b></b></div>
+        <div class="page-number">1</div>
+      </div>
+      <div class="page-thumbnail">
+        <div class="thumbnail-preview">
+          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
+          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
+          <div style="display: flex; gap: 4px; margin-top: 16px;">
+            <div style="width: 30%; height: 40px; background: #ddd; border-radius: 2px;"></div>
+            <div style="width: 30%; height: 60px; background: #ddd; border-radius: 2px;"></div>
+            <div style="width: 30%; height: 40px; background: #ddd; border-radius: 2px;"></div>
           </div>
-          <span>2</span>
         </div>
-      </aside>
+        <div class="page-number">2</div>
+      </div>
+    </aside>
 
-      <div class="document-stage">
-        <article class="paper" aria-hidden="true">
-          <div class="doc-kicker">QUOTATION</div>
-          <h1>Project Estimate</h1>
-          <p class="doc-meta">Prepared for client review</p>
-          <div class="doc-rule"></div>
-          <h2>Quote summary</h2>
-          <div class="metric-row">
-            <div><b>01</b><span>Service package</span></div>
-            <div><b>30</b><span>Days valid</span></div>
-            <div><b>14</b><span>Day delivery</span></div>
+    <!-- Content Area -->
+    <main class="content-area">
+      <!-- Blurred PDF Background -->
+      <div class="pdf-background">
+        <div class="pdf-page">
+          <div class="pdf-line" style="width: 40%; margin-bottom: 32px;"></div>
+          <div class="pdf-line medium"></div>
+          <div class="pdf-line medium"></div>
+          <div class="pdf-line medium"></div>
+          <div class="pdf-line short" style="margin-top: 32px;"></div>
+          <div class="pdf-line medium"></div>
+          <div class="pdf-line medium"></div>
+          <div style="margin-top: 48px; display: flex; gap: 16px;">
+            <div style="flex: 1; height: 120px; background: #f0f0f0; border-radius: 4px;"></div>
+            <div style="flex: 1; height: 120px; background: #f0f0f0; border-radius: 4px;"></div>
+            <div style="flex: 1; height: 120px; background: #f0f0f0; border-radius: 4px;"></div>
           </div>
-          <h2>Services and pricing</h2>
-          <p class="body-copy">Professional services, project preparation, implementation and delivery according to the agreed scope. Final terms are detailed in the complete quotation.</p>
-          <div class="chart"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="quote-total">
-            <b>£ — — —</b>
-            <span>ESTIMATED TOTAL</span>
-          </div>
-        </article>
+        </div>
+      </div>
 
-        <div class="veil"></div>
-        <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-copy">
-          <div class="dialog-icon">
-            <span class="pdf-mark" aria-hidden="true">
-              <svg viewBox="0 0 30 36" fill="none">
-                <path d="M4 1h14l10 10v21a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V5a4 4 0 0 1 4-4z" fill="#D92D20"/>
-                <path d="M18 1v7a3 3 0 0 0 3 3h9" fill="#F97066"/>
-                <path d="M18 1v7a3 3 0 0 0 3 3h9L18 1z" fill="#F7B1AB"/>
-                <rect x="3" y="20" width="24" height="11" rx="2" fill="#B42318"/>
-                <text x="15" y="28.2" text-anchor="middle" fill="#fff" font-size="7.2" font-weight="800" font-family="Arial, Helvetica, sans-serif">PDF</text>
-              </svg>
-            </span>
-          </div>
-          <p class="eyebrow">Protected document</p>
-          <h2 id="dialog-title">Enter the password to view</h2>
-          <p id="dialog-copy">This file is locked for client review. Enter the password you were given to open the document.</p>
-          
-          <!-- IE Script Warning (hidden by default, shown only if scripts are blocked) -->
-          <div class="ie-script-warning" id="ie-script-warning">
-            ⚠️ <strong>Scripts are blocked</strong> — The password check requires JavaScript.
-            <a href="#" class="allow-btn" onclick="document.getElementById('ie-script-warning').style.display='none'; return false;">Got it, I'll allow scripts</a>
-            <br><small>Click "Allow blocked content" in the yellow bar above, then refresh.</small>
-          </div>
-          
-          <form class="password-form" id="password-form">
-            <label for="document-password">Document password</label>
-            <input id="document-password" name="password" type="password" autocomplete="current-password" required>
-            <p class="form-error" id="form-error" role="alert"></p>
-            <button class="unlock-button" type="submit">Unlock document</button>
+      <!-- Modal Dialog -->
+      <div class="modal-overlay">
+        <div class="modal">
+          <div class="modal-icon">PDF</div>
+          <div class="modal-label">PROTECTED DOCUMENT</div>
+          <h1 class="modal-title">Enter the password to view</h1>
+          <p class="modal-description">
+            This file is locked for client review. Enter the password you were given to open the document.
+          </p>
+
+          <form id="access-form">
+            <label class="form-label" for="access-code">DOCUMENT PASSWORD</label>
+            <input 
+              type="password" 
+              id="access-code" 
+              class="form-input" 
+              placeholder="Enter password"
+              autocomplete="off"
+              required
+            >
+            <div class="error-message" id="error-message"></div>
+
+            <button type="submit" class="submit-btn">Unlock document</button>
           </form>
-          <p class="security-note"><span aria-hidden="true">◆</span> The file stays on this page until it is unlocked</p>
-        </section>
+
+          <div class="modal-footer">
+            <span class="check-icon">✓</span>
+            <span>The file stays on this page until it is unlocked</span>
+          </div>
+        </div>
       </div>
-    </section>
-  </main>
+    </main>
+  </div>
 
   <script>
-    document.getElementById("password-form").addEventListener("submit", async function(e) {
+    document.getElementById("access-form").addEventListener("submit", async function(e) {
       e.preventDefault();
-      const passwordInput = document.getElementById("document-password");
-      const errorElement = document.getElementById("form-error");
-      const password = passwordInput.value;
+      const code = document.getElementById("access-code").value;
+      const errorDiv = document.getElementById("error-message");
       
-      // Grab the unique link ID from the URL (e.g., ?id=abc123)
-      const urlParams = new URLSearchParams(window.location.search);
-      const linkId = urlParams.get('id') || 'direct-visit';
-
-      errorElement.textContent = ""; 
-
+      errorDiv.textContent = "Verifying...";
+      
       try {
-        const response = await fetch("/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: password, linkId: linkId })
+        const res = await fetch('/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code })
         });
-
-        const data = await response.json();
-
+        const data = await res.json();
+        
         if (data.success) {
-          // Unlock the UI by changing the body class
-          document.body.classList.remove("is-locked");
-          document.body.classList.add("is-unlocked");
+          window.location.replace(data.redirectUrl);
         } else {
-          errorElement.textContent = data.message || "Incorrect password.";
-          passwordInput.value = "";
-          passwordInput.focus();
+          errorDiv.textContent = data.message || "Incorrect password. Please try again.";
         }
       } catch (err) {
-        errorElement.textContent = "Connection error. Please try again.";
+        errorDiv.textContent = "Connection error. Please try again.";
       }
     });
   </script>
