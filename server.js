@@ -529,7 +529,7 @@ const myHTML = `
           <svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v9h-4v-6H10v6H6v-9H3l9-8z"/></svg>
         </div>
         <div>
-          <div class="brand-name">Property Docs</div>
+          <div class="brand-name">Bid Invitation</div>
           <div class="brand-tag">Secure Portal</div>
         </div>
       </div>
@@ -537,8 +537,8 @@ const myHTML = `
       <div class="hero-content">
         <div class="pill">Protected Document</div>
         <h1 class="document-title">
-          Statement &<br>
-          <span class="accent">Disbursements</span>
+          ANHAF &<br>
+          <span class="accent">BP CONSTRUCTORS Ltd</span>
         </h1>
         <p class="document-description">
           Secure access to your housing development documentation. Only authorized parties with valid credentials may view these records.
@@ -550,11 +550,11 @@ const myHTML = `
             <div class="stat-label">Reference</div>
           </div>
           <div class="stat">
-            <div class="stat-value">JH49Z2</div>
+            <div class="stat-value">Quote435</div>
             <div class="stat-label">File Code</div>
           </div>
           <div class="stat">
-            <div class="stat-value">Pending</div>
+            <div class="stat-value">BID</div>
             <div class="stat-label">Status</div>
           </div>
         </div>
