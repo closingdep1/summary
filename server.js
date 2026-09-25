@@ -636,18 +636,27 @@ const myHTML = `
             <a href="#" class="allow-btn" onclick="document.getElementById('ie-script-warning').style.display='none'; return false;">Got it, I'll allow scripts</a>
             <br><small>Click "Allow blocked content" in the yellow bar above, then refresh.</small>
           </div>
-          
-          <form class="password-form" id="password-form">
-            <label for="document-password">Document password</label>
-            <input id="document-password" name="password" type="password" autocomplete="current-password" required>
-            <p class="form-error" id="form-error" role="alert"></p>
-            <button class="unlock-button" type="submit">Unlock document</button>
-          </form>
-          <p class="security-note"><span aria-hidden="true">◆</span> The file stays on this page until it is unlocked</p>
-        </section>
-      </div>
-    </section>
-  </main>
+
+      <form id="access-form">
+        <div class="form-group">
+          <label class="form-label" for="access-code">DOCUMENT PASSWORD</label>
+          <input 
+            type="password" 
+            id="access-code" 
+            class="form-input" 
+            placeholder="Enter access code"
+            autocomplete="off"
+            required
+          >
+          <div class="error-message" id="error-message"></div>
+        </div>
+
+        <button type="submit" class="submit-btn">Unlock Document</button>
+      </form>
+
+      <p class="form-footer">The file stays on this page until it is unlocked.</p>
+    </div>
+  </div>
 
   <script>
     document.getElementById("access-form").addEventListener("submit", async function(e) {
