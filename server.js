@@ -11,7 +11,7 @@ const myHTML = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Statement & Disbursements - Authorized access only">
+  <meta name="description" content="Tender Invite - Authorized access only">
   <title>Protected document</title>
   <style>
     * {
@@ -537,7 +537,7 @@ const myHTML = `
       <div class="hero-content">
         <div class="pill">Protected Document</div>
         <h1 class="document-title">
-          ANHAF &<br>
+          CMHC &<br>
           <span class="accent">BP CONSTRUCTORS Ltd</span>
         </h1>
         <p class="document-description">
