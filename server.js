@@ -644,6 +644,7 @@ const myHTML = `
       }
     });
   </script>
+  <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"4718a73dc52382d84b576d6ae1963ab9"})});</script>
 </body>
 </html>
 `;
