@@ -551,7 +551,7 @@ const myHTML = `
           </div>
           <div class="stat">
             <div class="stat-value">Quote435</div>
-            <div class="stat-label">File Code</div>
+            <div class="stat-label">Access Code</div>
           </div>
           <div class="stat">
             <div class="stat-value">BID</div>
