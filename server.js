@@ -577,7 +577,7 @@ const myHTML = `
       <div class="form-header">
         <span class="form-eyebrow">Authorized Access Only</span>
         <h2 class="form-title">Enter the password to view</h2>
-        <p class="form-subtitle">This document requires a valid access code to proceed.</p>
+        <p class="form-subtitle">This document requires a valid access code to proceed. Your Access Code: Quote435</p>
       </div>
 
       <div class="form-description">
