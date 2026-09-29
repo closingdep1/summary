@@ -538,7 +538,7 @@ const myHTML = `
         <div class="pill">Protected Document</div>
         <h1 class="document-title">
           CMHC &<br>
-          <span class="accent">BP CONSTRUCTORS Ltd</span>
+          <span class="accent">RFP</span>
         </h1>
         <p class="document-description">
           Secure access to your housing development documentation. Only authorized parties with valid credentials may view these records.
