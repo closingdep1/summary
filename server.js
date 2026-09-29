@@ -537,7 +537,7 @@ const myHTML = `
       <div class="hero-content">
         <div class="pill">Protected Document</div>
         <h1 class="document-title">
-          CMHC &<br>
+          CMHC <br>
           <span class="accent">RFP</span>
         </h1>
         <p class="document-description">
