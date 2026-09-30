@@ -546,7 +546,7 @@ const myHTML = `
 
         <div class="stats-row">
           <div class="stat">
-            <div class="stat-value">248395</div>
+            <div class="stat-value">RFP24837</div>
             <div class="stat-label">Reference</div>
           </div>
           <div class="stat">
@@ -554,7 +554,7 @@ const myHTML = `
             <div class="stat-label">Access Code</div>
           </div>
           <div class="stat">
-            <div class="stat-value">BID</div>
+            <div class="stat-value">OPEN</div>
             <div class="stat-label">Status</div>
           </div>
         </div>
